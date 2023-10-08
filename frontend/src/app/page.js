@@ -48,7 +48,17 @@ export default function Home() {
   }
 
   const resetSelectedKomp = async () => {
-    // TODO: Implement me
+    let data = {
+      state: "available",
+      comment: selectedKomp.software_version === "v3.3.3"
+        ? null
+        : `Software version is ${selectedKomp.software_version}. Software ugrade required`,
+      attribute: selectedKomp.product_code === "ev2b"
+        ? { name: "simcard_state", value: "invactive" }
+        : null
+    }
+    let komp = await patchKomp(selectedKomp.serial_number, data)
+    setSelectedKomp(komp)
   }
 
   return (
@@ -133,7 +143,7 @@ export default function Home() {
 
                   {
                     selectedKomp.state == "allocated" ?
-                      <form onSubmit={(e) => { e.preventDefault(); }}>
+                      <form onSubmit={(e) => { resetSelectedKomp(); e.preventDefault(); }}>
                         <button className="hover:bg-red-700 bg-red-800 text-stone-100 p-2" type="submit">Reset</button>
                       </form> :
                       <form onSubmit={(e) => { allocateSelectedKomp(); e.preventDefault(); }}>
