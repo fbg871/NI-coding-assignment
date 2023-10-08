@@ -78,8 +78,13 @@ func updateKompStateAndComment(ctx context.Context, serialNumber, state, comment
 		return komp{}, err
 	}
 
-	k.State = state
-	k.Comment = comment
+	if state != "" {
+		k.State = state
+	}
+
+	if comment != "" {
+		k.Comment = comment
+	}
 
 	_, err = conn.NamedExecContext(ctx, `
 		update Komps set state=:state, comment=:comment where id=:id
