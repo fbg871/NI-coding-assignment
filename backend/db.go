@@ -2,9 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/jmoiron/sqlx"
 )
+
+const NewestSoftwareVersion = "v3.3.3"
 
 func findAllKomps(ctx context.Context, conn *sqlx.DB) ([]komp, error) {
 	var komps []komp
@@ -80,6 +83,10 @@ func updateKompStateAndComment(ctx context.Context, serialNumber, state, comment
 
 	if state != "" {
 		k.State = state
+
+		if state == "available" && k.SoftwareVersion != NewestSoftwareVersion {
+			k.Comment = fmt.Sprintf("Software version is %s. Software upgrade required", k.SoftwareVersion)
+		}
 	}
 
 	if comment != "" {

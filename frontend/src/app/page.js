@@ -48,16 +48,7 @@ export default function Home() {
   }
 
   const resetSelectedKomp = async () => {
-    let data = {
-      state: "available",
-      comment: selectedKomp.software_version === "v3.3.3"
-        ? null
-        : `Software version is ${selectedKomp.software_version}. Software ugrade required`,
-      attribute: selectedKomp.product_code === "ev2b"
-        ? { name: "simcard_state", value: "invactive" }
-        : null
-    }
-    let komp = await patchKomp(selectedKomp.serial_number, data)
+    let komp = await patchKomp(selectedKomp.serial_number, { state: "available" })
     setSelectedKomp(komp)
   }
 
