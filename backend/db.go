@@ -84,8 +84,12 @@ func updateKompStateAndComment(ctx context.Context, serialNumber, state, comment
 	if state != "" {
 		k.State = state
 
-		if state == "available" && k.SoftwareVersion != NewestSoftwareVersion {
-			k.Comment = fmt.Sprintf("Software version is %s. Software upgrade required", k.SoftwareVersion)
+		if state == "available" { 
+			if k.SoftwareVersion != NewestSoftwareVersion {
+				k.Comment = fmt.Sprintf("Software version is %s. Software upgrade required", k.SoftwareVersion)
+			} else {
+				k.Comment = ""
+			}
 		}
 	}
 
