@@ -104,3 +104,33 @@ func updateKompStateAndComment(ctx context.Context, serialNumber, state, comment
 
 	return k, nil
 }
+
+func createKompAttribute(ctx context.Context, createdAttribute attribute, conn *sqlx.DB) (attribute, error) {
+	fmt.Println("createKompAttribute")
+
+	_, err := conn.NamedExecContext(ctx, 
+		`insert into Attributes (komp_id, name, value) values (:komp_id, :name, :value)`, 
+		createdAttribute,
+	)
+
+	if err != nil {
+		return attribute{}, err
+	}
+	
+	return createdAttribute, nil
+}
+
+func updateKompAttribute(ctx context.Context, updatedAttribute attribute, conn *sqlx.DB) (attribute, error) {
+	fmt.Println("updateKompAttribute")
+
+	_, err := conn.NamedExecContext(ctx, 
+		`update Attributes set value=:value where komp_id=:komp_id and name=:name`, 
+		updatedAttribute,
+	)
+
+	if err != nil {
+		return attribute{}, err
+	}
+
+	return updatedAttribute, nil
+}

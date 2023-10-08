@@ -137,6 +137,41 @@ func patchKomp(conn *sqlx.DB) http.HandlerFunc {
 			return
 		}
 
+		if komp.ProductCode == "ev2b" && newState == "available"{
+			attributeIndex := -1
+
+			for i := 0; i < len(komp.Attributes); i++ {
+				if komp.Attributes[i].Name == "simcard_state" {
+					attributeIndex = i
+					break
+				}
+			}
+
+			var newAttribute = attribute{
+				ID:    komp.ID,
+				Name:  "simcard_state",
+				Value: "inactive",
+			}
+
+			if attributeIndex == -1 {
+				attribute, err := createKompAttribute(r.Context(), newAttribute, conn)
+				if err != nil {
+					writeTextResponse(http.StatusInternalServerError, err.Error(), w)
+					return
+				}
+
+				komp.Attributes = append(komp.Attributes, attribute)
+
+			} else if komp.Attributes[attributeIndex].Value != "inactive"{
+				attribute, err := updateKompAttribute(r.Context(), newAttribute, conn)
+				if err != nil {
+					writeTextResponse(http.StatusInternalServerError, err.Error(), w)
+					return
+				}
+
+				komp.Attributes[attributeIndex] = attribute
+			}
+		}
 		writeJSONResponse(200, komp, w)
 	}
 }
